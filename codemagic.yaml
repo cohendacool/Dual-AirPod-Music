@@ -1,4 +1,3 @@
-
 workflows:
   dual-airpod-ios:
     name: Dual AirPod Music iOS
@@ -8,43 +7,25 @@ workflows:
     environment:
       node: lts
       xcode: latest
-      cocoapods: default
 
     scripts:
       - name: Install npm dependencies
         script: npm install
 
-      - name: Create iOS project if needed
+      - name: Inspect Capacitor project
         script: |
-          if [ ! -d ios/App ]; then
-            npx cap add ios
-          fi
+          npx cap --version
+          npx cap ls
+          ls -la ios
+          find ios -maxdepth 4 \( -name "*.xcodeproj" -o -name "*.xcworkspace" -o -name "Package.swift" -o -name "Podfile" \) -print
 
       - name: Sync Capacitor iOS project
         script: npx cap sync ios
 
-      - name: Inspect iOS project
-        script: |
-          ls -la ios
-          ls -la ios/App || true
-          find ios -name Podfile -print
-
-      - name: Verify Podfile exists
-        script: |
-          if [ ! -f ios/App/Podfile ]; then
-            echo "ERROR: ios/App/Podfile was not generated."
-            exit 1
-          fi
-
-      - name: Install CocoaPods dependencies
-        script: |
-          cd ios/App
-          pod install
-
       - name: Build iOS app
         script: |
           xcodebuild \
-            -workspace ios/App/App.xcworkspace \
+            -project ios/App/App.xcodeproj \
             -scheme App \
             -configuration Debug \
             -destination 'generic/platform=iOS' \
