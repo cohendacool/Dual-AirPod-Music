@@ -1,1 +1,36 @@
+workflows:
+  dual-airpod-ios:
+    name: Dual AirPod Music iOS
+    max_build_duration: 120
+    instance_type: mac_mini_m2
 
+    environment:
+      node: lts
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Install npm dependencies
+        script: npm install
+
+      - name: Sync Capacitor iOS project
+        script: npx cap sync ios
+
+      - name: Install CocoaPods dependencies
+        script: |
+          cd ios/App
+          pod install
+
+      - name: Build iOS app
+        script: |
+          xcodebuild \
+            -workspace ios/App/App.xcworkspace \
+            -scheme App \
+            -configuration Debug \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+    artifacts:
+      - ios/App/build/**/*.app
+      - /tmp/xcodebuild_logs/**/*.log
