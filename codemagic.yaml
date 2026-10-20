@@ -1,3 +1,4 @@
+
 workflows:
   dual-airpod-ios:
     name: Dual AirPod Music iOS
@@ -13,8 +14,21 @@ workflows:
       - name: Install npm dependencies
         script: npm install
 
+      - name: Create iOS project if needed
+        script: |
+          if [ ! -f ios/App/Podfile ]; then
+            npx cap add ios
+          fi
+
       - name: Sync Capacitor iOS project
         script: npx cap sync ios
+
+      - name: Verify Podfile exists
+        script: |
+          if [ ! -f ios/App/Podfile ]; then
+            echo "ERROR: ios/App/Podfile was not generated."
+            exit 1
+          fi
 
       - name: Install CocoaPods dependencies
         script: |
@@ -28,9 +42,10 @@ workflows:
             -scheme App \
             -configuration Debug \
             -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             build
 
     artifacts:
-      - ios/App/build/**/*.app
+      - build/Build/Products/Debug-iphoneos/*.app
       - /tmp/xcodebuild_logs/**/*.log
