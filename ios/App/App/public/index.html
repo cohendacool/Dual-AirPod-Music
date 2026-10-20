@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111827">
+    <title>Dual Airpod Music</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="heads-up">
+        <h1><strong>Heads Up:</strong></h1>
+        <h2>AirPods / earbuds are mandatory for the best experience on this app.</h2>
+        <button onclick="hideWarning()">Understood</button>
+    </div>
+
+    <main id="main">
+        <header class="app-header">
+            <div>
+                <p class="eyebrow">YOUR PERSONAL MUSIC LIBRARY</p>
+                <h1>Dual Airpod Music</h1>
+            </div>
+            <label class="button primary-button" for="music-files">
+                Add Songs
+            </label>
+            <input id="music-files" type="file" accept="audio/*" multiple hidden>
+        </header>
+
+        <section class="panel">
+            <div class="section-header">
+                <div>
+                    <h2>Music Library</h2>
+                    <p id="library-count">0 songs</p>
+                </div>
+                <input id="search-songs" type="search" placeholder="Search songs..." aria-label="Search songs">
+            </div>
+
+            <div id="library-list" class="song-list" aria-live="polite">
+                <p class="empty-state">Add music files to get started.</p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="section-header">
+                <div>
+                    <h2>Playlists</h2>
+                    <p>Organize your music into collections.</p>
+                </div>
+            </div>
+
+            <form id="create-playlist-form" class="create-playlist">
+                <input id="playlist-name" type="text" maxlength="60" placeholder="New playlist name..." required>
+                <button class="button primary-button" type="submit">Create</button>
+            </form>
+
+            <div class="playlist-layout">
+                <div id="playlist-list" class="playlist-list">
+                    <p class="empty-state">No playlists yet.</p>
+                </div>
+
+                <div class="playlist-content">
+                    <div class="section-header playlist-content-header">
+                        <div>
+                            <h3 id="selected-playlist-name">Select a playlist</h3>
+                            <p id="selected-playlist-count">Choose a playlist to view its songs.</p>
+                        </div>
+                        <button id="delete-playlist" class="button danger-button" type="button" disabled>
+                            Delete
+                        </button>
+                    </div>
+
+                    <div id="playlist-songs" class="song-list">
+                        <p class="empty-state">Your playlist songs will appear here.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <p id="status-message" class="status-message" role="status"></p>
+
+        <section class="panel">
+    <div class="section-header">
+        <div>
+            <h2>AirPod Players</h2>
+            <p>Play different playlists in each earbud.</p>
+        </div>
+    </div>
+
+    <div class="airpod-layout">
+        <div class="airpod-box">
+            <h3>Left AirPod</h3>
+            <p id="left-now-playing">Nothing playing</p>
+            <label class="shuffle-option">
+                <input id="left-shuffle" type="checkbox">
+                Shuffle playlist
+            </label>
+            <div class="player-controls">
+                <button id="left-play-pause" class="button primary-button" type="button">Pause</button>
+                <button id="left-stop" class="button danger-button" type="button">Stop</button>
+            </div>
+        </div>
+
+        <div class="airpod-box">
+            <h3>Right AirPod</h3>
+            <p id="right-now-playing">Nothing playing</p>
+            <label class="shuffle-option">
+                <input id="right-shuffle" type="checkbox">
+                Shuffle playlist
+            </label>
+            <div class="player-controls">
+                <button id="right-play-pause" class="button primary-button" type="button">Pause</button>
+                <button id="right-stop" class="button danger-button" type="button">Stop</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="earbud-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="earbud-modal-title" hidden>
+    <div class="modal-content">
+        <h2 id="earbud-modal-title">Choose an AirPod</h2>
+        <p id="earbud-modal-playlist"></p>
+        <button id="play-left" class="button primary-button" type="button">Play in Left AirPod</button>
+        <button id="play-right" class="button primary-button" type="button">Play in Right AirPod</button>
+        <button id="cancel-earbud" class="button danger-button" type="button">Cancel</button>
+    </div>
+</div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
