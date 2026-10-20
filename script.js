@@ -384,7 +384,7 @@ async function loadData() {
 
 async function importTracks(files) {
     const audioFiles = Array.from(files).filter((file) => {
-        return file.type.startsWith("audio/");
+        return file.type.startsWith("audio/") || /\.(mp3|m4a|aac|wav|ogg|flac)$/i.test(file.name);
     });
 
     if (audioFiles.length === 0) {
