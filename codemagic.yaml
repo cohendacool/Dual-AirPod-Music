@@ -44,5 +44,6 @@ workflows:
           mv DualAirPodMusic-unsigned.ipa artifacts/
 
     artifacts:
+      - artifacts/*.ipa
       - build/Build/Products/Debug-iphoneos/*.app
       - /tmp/xcodebuild_logs/**/*.log
