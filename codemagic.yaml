@@ -16,12 +16,18 @@ workflows:
 
       - name: Create iOS project if needed
         script: |
-          if [ ! -f ios/App/Podfile ]; then
+          if [ ! -d ios/App ]; then
             npx cap add ios
           fi
 
       - name: Sync Capacitor iOS project
         script: npx cap sync ios
+
+      - name: Inspect iOS project
+        script: |
+          ls -la ios
+          ls -la ios/App || true
+          find ios -name Podfile -print
 
       - name: Verify Podfile exists
         script: |
