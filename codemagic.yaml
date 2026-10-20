@@ -22,6 +22,7 @@ workflows:
       - name: Sync Capacitor iOS project
         script: npx cap sync ios
 
+      
       - name: Build iOS app
         script: |
           xcodebuild \
@@ -32,6 +33,15 @@ workflows:
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
             build
+
+      - name: Package unsigned IPA
+        script: |
+          APP_PATH="build/Build/Products/Debug-iphoneos/App.app"
+          mkdir -p Payload
+          cp -R "$APP_PATH" Payload/
+          zip -r DualAirPodMusic-unsigned.ipa Payload
+          mkdir -p artifacts
+          mv DualAirPodMusic-unsigned.ipa artifacts/
 
     artifacts:
       - build/Build/Products/Debug-iphoneos/*.app
