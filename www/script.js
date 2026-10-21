@@ -31,18 +31,10 @@ const audioPlayers = {
 };
 
 function setupAudioPlayers() {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
     for (const [side, player] of Object.entries(audioPlayers)) {
         player.audio.preload = "auto";
-
-        player.source = audioContext.createMediaElementSource(player.audio);
-        player.panner = audioContext.createStereoPanner();
-
-        player.panner.pan.value = side === "left" ? -1 : 1;
-
-        player.source.connect(player.panner);
-        player.panner.connect(audioContext.destination);
+        
+        player.audio.playsInline = true;
 
         player.audio.addEventListener("ended", () => {
             playNextTrack(side);
@@ -143,22 +135,26 @@ async function playCurrentTrack(side) {
 
     const track = player.playlist[player.index];
 
+    // Clean up previous URL
     if (player.objectUrl) {
         URL.revokeObjectURL(player.objectUrl);
     }
 
-    player.objectUrl = URL.createObjectURL(track.file);
-    player.audio.src = player.objectUrl;
+    // Convert track file blob into Data URL so iOS background memory doesn't lose access to URL.createObjectURL
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        player.audio.src = e.target.result; // Data URL format
+        updatePlayerDisplay(side, track.name.replace(/\.[^.]+$/, ""));
 
-    updatePlayerDisplay(side, track.name.replace(/\.[^.]+$/, ""));
-
-    try {
-        await player.audio.play();
-        player.playing = true;
-    } catch (error) {
-        player.playing = false;
-        showStatus("Playback failed. Try pressing Play again.");
-    }
+        try {
+            await player.audio.play();
+            player.playing = true;
+        } catch (error) {
+            player.playing = false;
+            showStatus("Playback failed. Try pressing Play again.");
+        }
+    };
+    reader.readAsDataURL(track.file);
 }
 
 function playNextTrack(side) {
