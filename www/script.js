@@ -83,7 +83,7 @@ async function startPlaylist(side, playlistId) {
 
     const playlistTracks = playlist.trackIds
         .map((id) => tracks.find((track) => track.id === id))
-        .filter((track) => track && track.file);
+        .filter((track) => track && (track.file || track.audioData));
 
     if (playlistTracks.length === 0) {
         showStatus("This playlist has no playable songs.");
