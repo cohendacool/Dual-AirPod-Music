@@ -135,26 +135,31 @@ async function playCurrentTrack(side) {
 
     const track = player.playlist[player.index];
 
-    // Clean up previous URL
     if (player.objectUrl) {
         URL.revokeObjectURL(player.objectUrl);
+        player.objectUrl = null;
     }
 
-    // Convert track file blob into Data URL so iOS background memory doesn't lose access to URL.createObjectURL
-    const reader = new FileReader();
-    reader.onload = async function(e) {
-        player.audio.src = e.target.result; // Data URL format
+    // Use FileReader to convert the local file blob into a reliable Data URL for iOS
+    try {
+        const dataUrl = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(reader.error);
+            reader.readAsDataURL(track.file);
+        });
+
+        player.audio.src = dataUrl;
         updatePlayerDisplay(side, track.name.replace(/\.[^.]+$/, ""));
 
-        try {
-            await player.audio.play();
-            player.playing = true;
-        } catch (error) {
-            player.playing = false;
-            showStatus("Playback failed. Try pressing Play again.");
-        }
-    };
-    reader.readAsDataURL(track.file);
+        await player.audio.play();
+        player.playing = true;
+    } catch (error) {
+        player.playing = false;
+        console.error("Playback error:", error);
+        showStatus("Playback failed. Try pressing Play again.");
+        throw error; // Ensures startPlaylist catches it if needed, or handles gracefully
+    }
 }
 
 function playNextTrack(side) {
