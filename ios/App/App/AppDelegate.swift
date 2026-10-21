@@ -10,10 +10,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         do {
             let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .default)
+            try session.setCategory(.playback, mode: .default, options: [])
             try session.setActive(true)
         } catch {
-            print("Audio session configuration failed: \(error)")
+            print("Failed to set audio session category: \(error)")
         }
         
         // Override point for customization after application launch.
