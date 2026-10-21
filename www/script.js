@@ -137,28 +137,23 @@ async function playCurrentTrack(side) {
 
     if (player.objectUrl) {
         URL.revokeObjectURL(player.objectUrl);
-        player.objectUrl = null;
     }
 
-    // Use FileReader to convert the local file blob into a reliable Data URL for iOS
+    // Recreate a playable Blob from the stored ArrayBuffer
+    const blob = new Blob([track.audioData], { type: track.type });
+    player.objectUrl = URL.createObjectURL(blob);
+    player.audio.src = player.objectUrl;
+
+    updatePlayerDisplay(side, track.name.replace(/\.[^.]+$/, ""));
+
     try {
-        const dataUrl = await new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => reject(reader.error);
-            reader.readAsDataURL(track.file);
-        });
-
-        player.audio.src = dataUrl;
-        updatePlayerDisplay(side, track.name.replace(/\.[^.]+$/, ""));
-
         await player.audio.play();
         player.playing = true;
     } catch (error) {
         player.playing = false;
         console.error("Playback error:", error);
         showStatus("Playback failed. Try pressing Play again.");
-        throw error; // Ensures startPlaylist catches it if needed, or handles gracefully
+        throw error;
     }
 }
 
@@ -408,13 +403,16 @@ async function importTracks(files) {
             continue;
         }
 
+        // Convert file to ArrayBuffer so it persists safely in IndexedDB on iOS
+        const audioData = await file.arrayBuffer();
+
         const track = {
             id: createId(),
             name: file.name,
             size: file.size,
             type: file.type || "audio/mpeg",
             lastModified: file.lastModified,
-            file: file
+            audioData: audioData // Store ArrayBuffer instead of raw File object
         };
 
         await saveRecord("tracks", track);
