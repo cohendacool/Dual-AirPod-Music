@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111827">
+    <title>Dual Airpod Music</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="heads-up">
+        <h1><strong>Heads Up:</strong></h1>
+        <h2>AirPods / earbuds are mandatory for the best experience on this app.</h2>
+        <button onclick="hideWarning()">Understood</button>
+    </div>
+
+    <main id="main">
+        <header class="app-header">
+            <div>
+                <p class="eyebrow">YOUR PERSONAL MUSIC LIBRARY</p>
+                <h1>Dual Airpod Music</h1>
+            </div>
+            <div class="header-actions">
+                <label class="button primary-button" for="music-files">
+                    Add Songs
+                </label>
+                <button id="open-transfer-guide" class="button secondary-button" type="button">Import from USB</button>
+            </div>
+            <input id="music-files" type="file" accept="audio/*,.mp3,.m4a,.aac,.wav,.ogg,.flac,.opus,.aiff" multiple hidden>
+        </header>
+
+        <section class="panel">
+            <div class="section-header">
+                <div>
+                    <h2>Music Library</h2>
+                    <p id="library-count">0 songs</p>
+                </div>
+                <input id="search-songs" type="search" placeholder="Search songs..." aria-label="Search songs">
+            </div>
+
+            <div id="library-list" class="song-list" aria-live="polite">
+                <p class="empty-state">Add music files to get started.</p>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="section-header">
+                <div>
+                    <h2>Playlists</h2>
+                    <p>Organize your music into collections.</p>
+                </div>
+            </div>
+
+            <form id="create-playlist-form" class="create-playlist">
+                <input id="playlist-name" type="text" maxlength="60" placeholder="New playlist name..." required>
+                <button class="button primary-button" type="submit">Create</button>
+            </form>
+
+            <div class="playlist-layout">
+                <div id="playlist-list" class="playlist-list">
+                    <p class="empty-state">No playlists yet.</p>
+                </div>
+
+                <div class="playlist-content">
+                    <div class="section-header playlist-content-header">
+                        <div>
+                            <h3 id="selected-playlist-name">Select a playlist</h3>
+                            <p id="selected-playlist-count">Choose a playlist to view its songs.</p>
+                        </div>
+                        <button id="delete-playlist" class="button danger-button" type="button" disabled>
+                            Delete
+                        </button>
+                    </div>
+
+                    <div id="playlist-songs" class="song-list">
+                        <p class="empty-state">Your playlist songs will appear here.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <p id="status-message" class="status-message" role="status"></p>
+
+        <section class="panel">
+    <div class="section-header">
+        <div>
+            <h2>AirPod Players</h2>
+            <p>Play different playlists in each earbud.</p>
+        </div>
+    </div>
+
+    <div class="airpod-layout">
+        <div class="airpod-box">
+            <h3>Left AirPod</h3>
+            <p id="left-now-playing">Nothing playing</p>
+            <label class="shuffle-option">
+                <input id="left-shuffle" type="checkbox">
+                Shuffle playlist
+            </label>
+            <div class="player-controls">
+                <button id="left-play-pause" class="button primary-button" type="button">Pause</button>
+                <button id="left-stop" class="button danger-button" type="button">Stop</button>
+            </div>
+        </div>
+
+        <div class="airpod-box">
+            <h3>Right AirPod</h3>
+            <p id="right-now-playing">Nothing playing</p>
+            <label class="shuffle-option">
+                <input id="right-shuffle" type="checkbox">
+                Shuffle playlist
+            </label>
+            <div class="player-controls">
+                <button id="right-play-pause" class="button primary-button" type="button">Pause</button>
+                <button id="right-stop" class="button danger-button" type="button">Stop</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="transfer-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="transfer-modal-title" hidden>
+    <div class="modal-content transfer-modal-content">
+        <h2 id="transfer-modal-title">Import Music from Your Computer</h2>
+        <p>USB transfers copy music files onto your phone first. A website cannot directly browse your computer over USB.</p>
+        <div class="transfer-instructions">
+            <h3>Android phone + Windows PC</h3>
+            <ol>
+                <li>Connect your phone to the computer with a USB cable.</li>
+                <li>Unlock the phone and choose <strong>File transfer</strong> or <strong>Transferring files</strong> in its USB notification.</li>
+                <li>On the computer, open your phone in File Explorer and copy audio files into its Music folder.</li>
+                <li>Return to this app on your phone and tap <strong>Choose Transferred Files</strong>.</li>
+            </ol>
+            <h3>iPhone</h3>
+            <p>iPhones do not generally expose a normal Music folder to a website over USB. Transfer supported audio files into the Files app using a compatible Finder or file-sharing workflow, then select them here.</p>
+            <h3>Computer browser</h3>
+            <p>If you are using the app on the computer itself, you can simply tap Add Songs and choose the audio files directly.</p>
+        </div>
+        <button id="choose-transferred-files" class="button primary-button" type="button">Choose Transferred Files</button>
+        <button id="close-transfer-guide" class="button danger-button" type="button">Close</button>
+    </div>
+</div>
+
+<div id="earbud-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="earbud-modal-title" hidden>
+    <div class="modal-content">
+        <h2 id="earbud-modal-title">Choose an AirPod</h2>
+        <p id="earbud-modal-playlist"></p>
+        <button id="play-left" class="button primary-button" type="button">Play in Left AirPod</button>
+        <button id="play-right" class="button primary-button" type="button">Play in Right AirPod</button>
+        <button id="cancel-earbud" class="button danger-button" type="button">Cancel</button>
+    </div>
+</div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
