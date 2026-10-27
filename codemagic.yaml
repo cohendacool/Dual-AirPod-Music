@@ -31,14 +31,18 @@ workflows:
       
       - name: Build iOS app
         script: |
+          mkdir -p /tmp/xcodebuild_logs build
+
+          set -o pipefail
           xcodebuild \
             -project ios/App/App.xcodeproj \
             -scheme App \
             -configuration Debug \
             -destination 'generic/platform=iOS' \
             -derivedDataPath build \
+            -resultBundlePath build/Build.xcresult \
             CODE_SIGNING_ALLOWED=NO \
-            build
+            build 2>&1 | tee /tmp/xcodebuild_logs/xcodebuild.log
 
       - name: Package unsigned IPA
         script: |
