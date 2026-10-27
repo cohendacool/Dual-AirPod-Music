@@ -10,7 +10,13 @@ workflows:
 
     scripts:
       - name: Install npm dependencies
-        script: npm install
+        script: |
+          npm ci
+          npm ls @capacitor/core @capacitor/cli @capacitor/ios
+          test -d node_modules/@capacitor/ios || {
+            echo "ERROR: @capacitor/ios is missing from node_modules."
+            exit 1
+          }
 
       - name: Inspect Capacitor project
         script: |
